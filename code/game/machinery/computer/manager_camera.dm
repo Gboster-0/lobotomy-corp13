@@ -43,8 +43,14 @@
 		YELLOW_BULLET = list("name" = "Qliphoth Intervention Field", "desc" = "Overload a abnormalities Qliphoth Control to reduce their movement speed.", "icon_state" = "yellow"),
 		)
 
+	/* Locked actions */
+	// Unlocked by completing records core suppression
+	var/datum/action/innate/swap_cells/swap
+
 /obj/machinery/computer/camera_advanced/manager/Initialize(mapload)
 	. = ..()
+	GLOB.manager_consoles += src
+
 	cycle = new
 	fire = new
 	cyclecommand = new
@@ -53,6 +59,10 @@
 
 	command_cooldown = world.time
 	RegisterSignal(SSdcs, COMSIG_GLOB_MELTDOWN_START, .proc/recharge_meltdown)
+
+/obj/machinery/computer/camera_advanced/manager/Destroy()
+	GLOB.manager_consoles -= src
+	return ..()
 
 /obj/machinery/computer/camera_advanced/manager/examine(mob/user)
 	. = ..()
@@ -88,9 +98,16 @@
 		follow.Grant(user)
 		actions += follow
 
+	if(swap)
+		swap.target = src
+		swap.Grant(user)
+		swap.selected_abno = null
+		actions += swap
+
 	RegisterSignal(user, COMSIG_MOB_CTRL_CLICKED, .proc/on_hotkey_click) //wanted to use shift click but shift click only allowed applying the effects to my player.
 	RegisterSignal(user, COMSIG_XENO_TURF_CLICK_ALT, .proc/on_alt_click)
 	RegisterSignal(user, COMSIG_MOB_SHIFTCLICKON, .proc/ManagerExaminate)
+	RegisterSignal(user, COMSIG_MOB_CTRLSHIFTCLICKON, .proc/OnCtrlShiftClick)
 
 /obj/machinery/computer/camera_advanced/manager/attackby(obj/item/O, mob/user, params)
 	if(istype(O, /obj/item/managerbullet) && ammo <= maxAmmo)
@@ -109,51 +126,67 @@
 
 /obj/machinery/computer/camera_advanced/manager/proc/on_hotkey_click(datum/source, atom/clicked_atom) //system control for hotkeys
 	SIGNAL_HANDLER
+
+	// No target :(
 	if(!isliving(clicked_atom))
 		return
+
+	// No bullets :(
+	if(!ammo)
+		playsound(get_turf(src), 'sound/weapons/empty.ogg', 10, 0, 3)
+		to_chat(source, "<span class='warning'>AMMO RESERVE EMPTY.</span>")
+		return
+
+	// AOE bullets
+	if(SSlobotomy_corp.manager_bullet_area > -1)
+		var/success = FALSE
+		for(var/mob/living/L in range(SSlobotomy_corp.manager_bullet_area, clicked_atom))
+			if(ishuman(clicked_atom))
+				clickedemployee(source, clicked_atom)
+				success = TRUE
+			if(ishostile(clicked_atom))
+				clickedabno(source, clicked_atom)
+				success = TRUE
+		if(success)
+			ammo--
+		return
+
+	// Non-AOE
 	if(ishuman(clicked_atom))
 		clickedemployee(source, clicked_atom)
+		ammo--
 		return
 	if(ishostile(clicked_atom))
 		clickedabno(source, clicked_atom)
+		ammo--
 		return
 
 /obj/machinery/computer/camera_advanced/manager/proc/clickedemployee(mob/living/owner, mob/living/carbon/employee) //contains carbon copy code of fire action
-	if(ammo >= 1)
-		var/mob/living/carbon/human/H = employee
-		switch(bullettype)
-			if(HP_BULLET)
-				H.adjustBruteLoss(-0.15*H.maxHealth)
-			if(SP_BULLET)
-				H.adjustSanityLoss(-0.15*H.maxSanity)
-			if(RED_BULLET)
-				H.apply_status_effect(/datum/status_effect/interventionshield)
-			if(WHITE_BULLET)
-				H.apply_status_effect(/datum/status_effect/interventionshield/white)
-			if(BLACK_BULLET)
-				H.apply_status_effect(/datum/status_effect/interventionshield/black)
-			if(PALE_BULLET)
-				H.apply_status_effect(/datum/status_effect/interventionshield/pale)
-			if(YELLOW_BULLET)
-				if(!owner.faction_check_mob(H))
-					H.apply_status_effect(/datum/status_effect/qliphothoverload)
-				else
-					to_chat(owner, "<span class='warning'>WELFARE SAFETY SYSTEM ERROR: TARGET SHARES CORPORATE FACTION.</span>")
-					return
+	var/mob/living/carbon/human/H = employee
+	switch(bullettype)
+		if(HP_BULLET)
+			H.adjustBruteLoss(-0.15*H.maxHealth)
+		if(SP_BULLET)
+			H.adjustSanityLoss(-0.15*H.maxSanity)
+		if(RED_BULLET)
+			H.apply_status_effect(/datum/status_effect/interventionshield)
+		if(WHITE_BULLET)
+			H.apply_status_effect(/datum/status_effect/interventionshield/white)
+		if(BLACK_BULLET)
+			H.apply_status_effect(/datum/status_effect/interventionshield/black)
+		if(PALE_BULLET)
+			H.apply_status_effect(/datum/status_effect/interventionshield/pale)
+		if(YELLOW_BULLET)
+			if(!owner.faction_check_mob(H))
+				H.apply_status_effect(/datum/status_effect/qliphothoverload)
 			else
-				to_chat(owner, "<span class='warning'>ERROR: BULLET INITIALIZATION FAILURE.</span>")
+				to_chat(owner, "<span class='warning'>WELFARE SAFETY SYSTEM ERROR: TARGET SHARES CORPORATE FACTION.</span>")
 				return
-		ammo--
-		playsound(get_turf(src), 'ModularTegustation/Tegusounds/weapons/guns/manager_bullet_fire.ogg', 10, 0, 3)
-		playsound(get_turf(H), 'ModularTegustation/Tegusounds/weapons/guns/manager_bullet_fire.ogg', 10, 0, 3)
-		to_chat(owner, "<span class='warning'>Loading [ammo] Bullets.</span>")
-		return
-	if(ammo <= 0)
-		playsound(get_turf(src), 'sound/weapons/empty.ogg', 10, 0, 3)
-		to_chat(owner, "<span class='warning'>AMMO RESERVE EMPTY.</span>")
-	else
-		to_chat(owner, "<span class='warning'>NO TARGET.</span>")
-		return
+		else
+			to_chat(owner, "<span class='warning'>ERROR: BULLET INITIALIZATION FAILURE.</span>")
+			return
+	playsound(get_turf(src), 'ModularTegustation/Tegusounds/weapons/guns/manager_bullet_fire.ogg', 10, 0, 3)
+	playsound(get_turf(H), 'ModularTegustation/Tegusounds/weapons/guns/manager_bullet_fire.ogg', 10, 0, 3)
 
 /obj/machinery/computer/camera_advanced/manager/proc/clickedabno(mob/living/owner, mob/living/simple_animal/hostile/critter)
 	if(ammo >= 1)
@@ -226,6 +259,11 @@
 			else
 				to_chat(C, "<span class='warning'>CALIBRATION ERROR.</span>")
 		commandtimer()
+
+/obj/machinery/computer/camera_advanced/manager/proc/OnCtrlShiftClick(mob/living/user, atom/target)
+	if(!istype(swap))
+		return
+	swap.Activate(target)
 
 /obj/machinery/computer/camera_advanced/manager/proc/commandtimer()
 	command_cooldown = world.time + command_delay
@@ -455,6 +493,40 @@
 			else
 				to_chat(owner, "<span class='warning'>CALIBRATION ERROR.</span>")
 		X.commandtimer()
+
+//////////////
+// Unlockables
+//////////////
+
+// Records core reward
+/datum/action/innate/swap_cells
+	name = "Swap Abnormality Cells"
+	desc = "Hotkey = Alt + Shift + Click"
+	icon_icon = 'icons/mob/actions/actions_items.dmi'
+	button_icon_state = "vortex_ff_off"
+	/// Currently selected abnormality; Next activation will do the swap
+	var/datum/abnormality/selected_abno = null
+
+/datum/action/innate/swap_cells/Activate(mob/living/simple_animal/hostile/abnormality/A = null)
+	if(isnull(A))
+		A = locate() in get_turf(owner.remote_control)
+
+	if(!istype(A) || !istype(A.datum_reference) || !A.IsContained())
+		to_chat(owner, span_warning("The target must be an abnormality within your containment zone!"))
+		return
+
+	if(!selected_abno)
+		selected_abno = A.datum_reference
+		to_chat(owner, span_notice("[A.datum_reference.name] selected as first argument for a cell swap. Activate on a second abnormality to perform."))
+		return
+
+	if(!selected_abno.SwapPlaceWith(A.datum_reference))
+		to_chat(owner, span_danger("Cell swap failed! Both arguments have been reset."))
+		selected_abno = null
+		return
+	to_chat(owner, span_notice("Cell swap between <b>[selected_abno.name] and [A.datum_reference.name]</b> was successful! Arguments reset."))
+	selected_abno = null
+	playsound(get_turf(target), 'sound/machines/terminal_success.ogg', 10, TRUE)
 
 // Temp Effects
 

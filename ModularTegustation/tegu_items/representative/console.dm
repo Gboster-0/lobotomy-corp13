@@ -176,8 +176,8 @@
 			order_list = list(
 				new /datum/data/extraction_cargo("L Corp Regeneration Augmentation Kit", /obj/item/safety_kit, 400, L_CORP_REP) = 1,
 				new /datum/data/extraction_cargo("L Corp Slowing Trap Generator", /obj/item/powered_gadget/slowingtrapmk1, 400, L_CORP_REP) = 1,
-				new /datum/data/extraction_cargo("L Corp Vitals Projector", /obj/item/powered_gadget/clerkbot_gadget, 400, L_CORP_REP) = 1,
-				new /datum/data/extraction_cargo("L Corp Clerkbot Kit", /obj/item/powered_gadget/slowingtrapmk1, 400, L_CORP_REP) = 1,
+				new /datum/data/extraction_cargo("L Corp Vitals Projector", /obj/item/powered_gadget/vitals_projector, 400, L_CORP_REP) = 1,
+				new /datum/data/extraction_cargo("L Corp Clerkbot Kit", /obj/item/powered_gadget/clerkbot_gadget, 400, L_CORP_REP) = 1,
 				new /datum/data/extraction_cargo("L Corp Taser", /obj/item/powered_gadget/handheld_taser, 700, L_CORP_REP) = 1,
 				)
 
@@ -197,7 +197,7 @@
 			CustomizeOffice(/obj/structure/sign/departments/w_corp, /obj/structure/pe_sales/w_corp)
 			order_list = list(
 				new /datum/data/extraction_cargo("W Corp Cleanup Outfit", /obj/item/clothing/under/suit/lobotomy/wcorp, 100, W_CORP_REP) = 1,
-				new /datum/data/extraction_cargo("W Corp Hat", /obj/item/clothing/head/wcorp, 100, W_CORP_REP) = 1,
+				new /datum/data/extraction_cargo("W Corp Hat", /obj/item/clothing/head/ego_hat/wcorp, 100, W_CORP_REP) = 1,
 				new /datum/data/extraction_cargo("W Corp Cleanup Baton", /obj/item/ego_weapon/city/charge/wcorp, 500, W_CORP_REP) = 1,
 				new /datum/data/extraction_cargo("W Corp Armor Vest", /obj/item/clothing/suit/armor/ego_gear/wcorp, 700, W_CORP_REP) = 1,
 				)
