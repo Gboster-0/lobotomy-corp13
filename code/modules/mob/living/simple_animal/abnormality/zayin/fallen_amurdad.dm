@@ -5,6 +5,7 @@
 	icon = 'ModularTegustation/Teguicons/tegumobs.dmi'
 	icon_state = "amurdad"
 	icon_living = "amurdad"
+	portrait = "fallen_amurdad"
 	threat_level = ZAYIN_LEVEL
 	work_chances = list(
 						ABNORMALITY_WORK_INSTINCT = list(50, 40, 30, 30, 30),
@@ -408,11 +409,11 @@
 
 /datum/reagent/toxin/amurdad_poison/on_mob_metabolize(mob/living/L)
 	. = ..()
-	to_chat(L, "<span class='warning'>You feel nauseous...</span>")
+	to_chat(L, span_warning("You feel nauseous..."))
 
 /datum/reagent/toxin/amurdad_poison/on_mob_end_metabolize(mob/living/L)
 	. = ..()
-	to_chat(L, "<span class='nicegreen'>You start to feel better.</span>")
+	to_chat(L, span_danger("You start to feel better."))
 
 /datum/reagent/toxin/amurdad_poison/on_mob_life(mob/living/M)
 	var/damage_mod = 1
