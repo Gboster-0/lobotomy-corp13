@@ -325,14 +325,24 @@
 
 // Additional effects on good work result, if any
 /mob/living/simple_animal/hostile/abnormality/proc/SuccessEffect(mob/living/carbon/human/user, work_type, pe, work_time, canceled)
+	WorkCompleteEffect("good")
 	return
 
 // Additional effects on neutral work result, if any
 /mob/living/simple_animal/hostile/abnormality/proc/NeutralEffect(mob/living/carbon/human/user, work_type, pe, work_time, canceled)
+	WorkCompleteEffect("normal")
 	return
 
 // Additional effects on work failure
 /mob/living/simple_animal/hostile/abnormality/proc/FailureEffect(mob/living/carbon/human/user, work_type, pe, work_time, canceled)
+	WorkCompleteEffect("bad")
+	return
+
+// Visual effect for work completion
+/mob/living/simple_animal/hostile/abnormality/proc/WorkCompleteEffect(state)
+	var/turf/target_turf = get_ranged_target_turf(src, SOUTHWEST, 1)
+	var/obj/effect/temp_visual/workcomplete/VFX = new(target_turf)
+	VFX.icon_state = state
 	return
 
 // Giving an EGO gift to the user after work is complete
@@ -361,6 +371,14 @@
 // Additional effect on each individual work tick failure
 /mob/living/simple_animal/hostile/abnormality/proc/WorktickFailure(mob/living/carbon/human/user)
 	user.apply_damage(work_damage_amount, work_damage_type, null, user.run_armor_check(null, work_damage_type), spread_damage = TRUE)
+	WorkDamageEffect()
+	return
+
+// Visual effect for work damage
+/mob/living/simple_animal/hostile/abnormality/proc/WorkDamageEffect()
+	var/turf/target_turf = get_ranged_target_turf(src, SOUTHWEST, 1)
+	var/obj/effect/temp_visual/roomdamage/damage = new(target_turf)
+	damage.icon_state = "[work_damage_type]"
 	return
 
 // Dictates whereas this type of work can be performed at the moment or not

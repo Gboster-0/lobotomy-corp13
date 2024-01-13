@@ -27,12 +27,13 @@
 	start_qliphoth = 2
 	can_spawn = FALSE // Normally doesn't appear
 
-/mob/living/simple_animal/hostile/abnormality/fairy_swarm/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/fairy_swarm/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	GiveTarget(user)
 	addtimer(CALLBACK(src, .proc/die), 60 SECONDS)
 
 /mob/living/simple_animal/hostile/abnormality/fairy_swarm/SuccessEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 

@@ -215,11 +215,12 @@
 
 
 /mob/living/simple_animal/hostile/abnormality/yang/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
-/mob/living/simple_animal/hostile/abnormality/yang/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/yang/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	icon_state = icon_breach
 	SSlobotomy_events.yang_downed = FALSE
 

@@ -357,6 +357,7 @@
 /* Abnormality work */
 
 /mob/living/simple_animal/hostile/abnormality/mountain/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
@@ -375,8 +376,8 @@
 
 /* Abnormality breach */
 
-/mob/living/simple_animal/hostile/abnormality/mountain/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/mountain/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	GiveTarget(user)
 	icon_living = "mosb_breach"
 	icon_state = icon_living

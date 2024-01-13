@@ -58,13 +58,16 @@
 
 //Work Procs
 /mob/living/simple_animal/hostile/abnormality/fire_bird/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(1)
 
 /mob/living/simple_animal/hostile/abnormality/fire_bird/NeutralEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(30))
 		datum_reference.qliphoth_change(-1)
 
 /mob/living/simple_animal/hostile/abnormality/fire_bird/SuccessEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 
 /mob/living/simple_animal/hostile/abnormality/fire_bird/OnQliphothChange(mob/living/carbon/human/user)
@@ -99,8 +102,8 @@
 	user.remove_status_effect(STATUS_EFFECT_BLINDED)
 
 //Breach
-/mob/living/simple_animal/hostile/abnormality/fire_bird/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/fire_bird/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	loot = list(/obj/item/gun/ego_gun/feather)
 	icon_state = icon_living
 	light_range = 20

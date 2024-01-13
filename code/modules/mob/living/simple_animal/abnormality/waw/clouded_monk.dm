@@ -84,10 +84,12 @@
 /* Eventually there needs to be code here that causes it to breach when Yin gets too close. Yin is not implemented at this time. */
 //work code
 /mob/living/simple_animal/hostile/abnormality/clouded_monk/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
 /mob/living/simple_animal/hostile/abnormality/clouded_monk/NeutralEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(25))
 		datum_reference.qliphoth_change(-1)
 	return
@@ -107,8 +109,8 @@
 		charge_ready = TRUE
 		damage_taken = 0
 
-/mob/living/simple_animal/hostile/abnormality/clouded_monk/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/clouded_monk/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	soundloop.start()
 	playsound(src, 'sound/abnormalities/clouded_monk/howl.ogg', 50, 1)
 	playsound(src, 'sound/abnormalities/clouded_monk/transform.ogg', 50, 1)

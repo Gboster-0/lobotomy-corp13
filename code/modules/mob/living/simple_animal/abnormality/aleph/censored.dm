@@ -216,11 +216,12 @@
 	return
 
 /mob/living/simple_animal/hostile/abnormality/censored/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
-/mob/living/simple_animal/hostile/abnormality/censored/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/censored/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	icon_living = "censored_breach"
 	icon_state = icon_living
 	return

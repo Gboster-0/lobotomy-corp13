@@ -25,9 +25,9 @@
 	start_qliphoth = 1
 	del_on_death = FALSE
 	can_patrol = FALSE
-	deathmessage = "collapses into a pile of plantmatter."
+	death_message = "collapses into a pile of plantmatter."
 	vision_range = 15
-	deathsound = 'sound/creatures/venus_trap_death.ogg'
+	death_sound = 'sound/creatures/venus_trap_death.ogg'
 	attacked_sound = 'sound/creatures/venus_trap_hurt.ogg'
 	work_chances = list(
 						ABNORMALITY_WORK_INSTINCT = list(0, 0, 40, 40, 40),
@@ -63,16 +63,18 @@
 	)
 
 /mob/living/simple_animal/hostile/abnormality/snow_whites_apple/NeutralEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(50))
 		datum_reference.qliphoth_change(-1)
 	return
 
 /mob/living/simple_animal/hostile/abnormality/snow_whites_apple/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
-/mob/living/simple_animal/hostile/abnormality/snow_whites_apple/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/snow_whites_apple/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	update_icon()
 
 /mob/living/simple_animal/hostile/abnormality/snow_whites_apple/Initialize()

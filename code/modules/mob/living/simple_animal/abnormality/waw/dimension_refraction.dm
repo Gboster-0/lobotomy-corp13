@@ -61,12 +61,13 @@
 	return FALSE
 
 /* Qliphoth/Breach effects */
-/mob/living/simple_animal/hostile/abnormality/dimensional_refraction/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/dimensional_refraction/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	alpha = 30
 	addtimer(CALLBACK(src, .proc/Melter), cooldown_time)
 
 
 /mob/living/simple_animal/hostile/abnormality/dimensional_refraction/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return

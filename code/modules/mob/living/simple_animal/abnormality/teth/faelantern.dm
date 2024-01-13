@@ -21,7 +21,7 @@
 	can_patrol = FALSE
 	can_breach = TRUE
 	del_on_death = FALSE
-	deathmessage = "creaks and crumbles into its core."
+	death_message = "creaks and crumbles into its core."
 	ranged = TRUE
 
 	work_damage_amount = 5
@@ -77,11 +77,12 @@
 	return
 
 /mob/living/simple_animal/hostile/abnormality/faelantern/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
-/mob/living/simple_animal/hostile/abnormality/faelantern/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/faelantern/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	INVOKE_ASYNC(src, .proc/BreachDig)
 	return
 

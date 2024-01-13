@@ -178,16 +178,18 @@
 
 /* Work effects */
 /mob/living/simple_animal/hostile/abnormality/helper/NeutralEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(40))
 		datum_reference.qliphoth_change(-1)
 	return
 
 /mob/living/simple_animal/hostile/abnormality/helper/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(80))
 		datum_reference.qliphoth_change(-1)
 	return
 
-/mob/living/simple_animal/hostile/abnormality/helper/BreachEffect(mob/living/carbon/human/user)
+/mob/living/simple_animal/hostile/abnormality/helper/BreachEffect(mob/living/carbon/human/user, breach_type)
 	..()
 	update_icon()
 	GiveTarget(user)

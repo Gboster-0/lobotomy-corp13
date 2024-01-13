@@ -29,7 +29,7 @@
 	can_patrol = FALSE
 	wander = FALSE
 	del_on_death = FALSE
-	deathmessage = "crumbles into bits."
+	death_message = "crumbles into bits."
 	attack_sound = 'sound/abnormalities/doomsdaycalendar/Doomsday_Attack.ogg'
 	melee_damage_lower = 10
 	melee_damage_upper = 15
@@ -131,6 +131,7 @@
 	return chance
 
 /mob/living/simple_animal/hostile/abnormality/doomsday_calendar/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(work_type == ABNORMALITY_WORK_INSTINCT)
 		return
 	datum_reference.qliphoth_change(-1)
@@ -173,8 +174,8 @@
 	other_works_maximum = (4 + round(player_count / 6))
 
 //***Breach Mechanics***//
-/mob/living/simple_animal/hostile/abnormality/doomsday_calendar/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/doomsday_calendar/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	var/turf/T = pick(GLOB.department_centers)
 	icon_state = "doomsday_active"
 	forceMove(T)

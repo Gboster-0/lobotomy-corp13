@@ -39,7 +39,7 @@
 	/* Sounds */
 	projectilesound = 'sound/abnormalities/meltinglove/ranged.ogg'
 	attack_sound = 'sound/abnormalities/meltinglove/attack.ogg'
-	deathsound = 'sound/abnormalities/meltinglove/death.ogg'
+	death_sound = 'sound/abnormalities/meltinglove/death.ogg'
 	/*Vars and others */
 	loot = list(/obj/item/reagent_containers/glass/bucket/melting)
 	del_on_death = FALSE
@@ -124,20 +124,23 @@
 
 /* Qliphoth things */
 /mob/living/simple_animal/hostile/abnormality/melting_love/SuccessEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(33) && user == gifted_human && pe >= datum_reference?.max_boxes)
 		datum_reference.qliphoth_change(1)
 	return
 
 /mob/living/simple_animal/hostile/abnormality/melting_love/NeutralEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(50))
 		datum_reference.qliphoth_change(-1)
 	return
 
 /mob/living/simple_animal/hostile/abnormality/melting_love/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
-/mob/living/simple_animal/hostile/abnormality/melting_love/BreachEffect(mob/living/carbon/human/user)
+/mob/living/simple_animal/hostile/abnormality/melting_love/BreachEffect(mob/living/carbon/human/user, breach_type)
 	. = ..()
 	icon = 'ModularTegustation/Teguicons/96x96.dmi'
 	icon_living = "melting_breach"
@@ -244,7 +247,7 @@
 	speed = 2
 	move_to_delay = 2.5
 	/* Sounds */
-	deathsound = 'sound/abnormalities/meltinglove/pawn_death.ogg'
+	death_sound = 'sound/abnormalities/meltinglove/pawn_death.ogg'
 	attack_sound = 'sound/abnormalities/meltinglove/pawn_attack.ogg'
 	/* Vars and others */
 	robust_searching = TRUE

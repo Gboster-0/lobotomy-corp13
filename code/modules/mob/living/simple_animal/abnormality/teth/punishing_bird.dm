@@ -273,8 +273,8 @@
 	..()
 	Retaliate(user)
 
-/mob/living/simple_animal/hostile/abnormality/punishing_bird/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/punishing_bird/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	icon_state = initial(icon_state)
 	icon_living = initial(icon_living)
 	pixel_x = initial(pixel_x)
@@ -323,11 +323,13 @@
 	return
 
 /mob/living/simple_animal/hostile/abnormality/punishing_bird/SuccessEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(1)
 	manual_emote("chirps!")
 	return
 
 /mob/living/simple_animal/hostile/abnormality/punishing_bird/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 

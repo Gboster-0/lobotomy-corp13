@@ -118,11 +118,13 @@
 
 //*** Work mechanics ***
 /mob/living/simple_animal/hostile/abnormality/wayward/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(75))
 		datum_reference.qliphoth_change(-1)
 	return
 
 /mob/living/simple_animal/hostile/abnormality/wayward/NeutralEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(prob(20))
 		datum_reference.qliphoth_change(-1)
 	return
@@ -139,10 +141,10 @@
 
 //*** Breach mechanics ***
 
-/mob/living/simple_animal/hostile/abnormality/wayward/BreachEffect(mob/living/carbon/human/user)
+/mob/living/simple_animal/hostile/abnormality/wayward/BreachEffect(mob/living/carbon/human/user, breach_type)
 	icon_state = "wayward_breach"
 	playsound(src, 'sound/abnormalities/thunderbird/tbird_zombify.ogg', 45, FALSE, 5)//this is the sound effect used for Tomerry in the lovetown reception
-	..()
+	. = ..()
 
 //*** Teleport code ***//
 /mob/living/simple_animal/hostile/abnormality/wayward/proc/TryTeleport(turf/teleport_target)//argument is used when the proc is called with a client

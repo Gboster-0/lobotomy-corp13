@@ -25,8 +25,8 @@
 	projectiletype = /obj/projectile/hatred
 	del_on_death = FALSE
 	projectilesound = 'sound/abnormalities/hatredqueen/attack.ogg'
-	deathsound = 'sound/abnormalities/hatredqueen/dead.ogg'
-	deathmessage = "slowly falls to the ground."
+	death_sound = 'sound/abnormalities/hatredqueen/dead.ogg'
+	death_message = "slowly falls to the ground."
 	check_friendly_fire = TRUE
 
 	move_to_delay = 4
@@ -545,15 +545,18 @@
 	addtimer(CALLBACK(src, .proc/HostileTransform), 10 SECONDS)
 
 /mob/living/simple_animal/hostile/abnormality/hatred_queen/SuccessEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(1)
 	return
 
 /mob/living/simple_animal/hostile/abnormality/hatred_queen/NeutralEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	if(datum_reference?.qliphoth_meter == 1)
 		datum_reference.qliphoth_change(-1)
 	return
 
 /mob/living/simple_animal/hostile/abnormality/hatred_queen/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
@@ -582,7 +585,7 @@
 	friendly = FALSE
 	return ..()
 
-/mob/living/simple_animal/hostile/abnormality/hatred_queen/BreachEffect(mob/living/carbon/human/user)
+/mob/living/simple_animal/hostile/abnormality/hatred_queen/BreachEffect(mob/living/carbon/human/user, breach_type)
 	death_counter = 0
 	if(friendly)
 		friendly = TRUE

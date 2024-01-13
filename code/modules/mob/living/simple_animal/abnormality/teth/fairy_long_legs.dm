@@ -32,8 +32,8 @@
 						)
 	work_damage_amount = 5
 	work_damage_type = RED_DAMAGE
-	deathmessage = "coalesces into a primordial egg."
-	deathsound = 'sound/abnormalities/fairy_longlegs/death.ogg'
+	death_message = "coalesces into a primordial egg."
+	death_sound = 'sound/abnormalities/fairy_longlegs/death.ogg'
 	abnormality_origin = ABNORMALITY_ORIGIN_LIMBUS
 
 	grouped_abnos = list(
@@ -106,6 +106,7 @@
 
 
 /mob/living/simple_animal/hostile/abnormality/fairy_longlegs/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 	return
 
@@ -144,7 +145,7 @@
 	icon_state = "fairy_longlegs"
 	finishing = FALSE
 
-/mob/living/simple_animal/hostile/abnormality/fairy_longlegs/BreachEffect(mob/living/carbon/human/user)
+/mob/living/simple_animal/hostile/abnormality/fairy_longlegs/BreachEffect(mob/living/carbon/human/user, breach_type)
 	. = ..()
 	if(raining)
 		for(var/obj/effect/rainy_effect/rain in range(3, src))

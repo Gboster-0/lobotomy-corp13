@@ -8,8 +8,8 @@
 	icon_state = "drifting_fox"
 	icon_living = "drifting_fox"
 	icon_dead = "fox_egg"
-	deathmessage = "Collapses into a glass egg"
-	deathsound = 'sound/abnormalities/drifting_fox/fox_death_sound.ogg'
+	death_message = "Collapses into a glass egg"
+	death_sound = 'sound/abnormalities/drifting_fox/fox_death_sound.ogg'
 	pixel_x = -24
 	pixel_y = -26
 	base_pixel_x = -24
@@ -67,10 +67,11 @@
 	return
 
 /mob/living/simple_animal/hostile/abnormality/drifting_fox/FailureEffect(mob/living/carbon/human/user, work_type, pe)
+	. = ..()
 	datum_reference.qliphoth_change(-1)
 
-/mob/living/simple_animal/hostile/abnormality/drifting_fox/BreachEffect(mob/living/carbon/human/user)
-	..()
+/mob/living/simple_animal/hostile/abnormality/drifting_fox/BreachEffect(mob/living/carbon/human/user, breach_type)
+	. = ..()
 	icon_living = "fox_breach"
 	icon_state = icon_living
 	pixel_y = -6
