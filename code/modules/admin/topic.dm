@@ -2286,17 +2286,9 @@
 			to_chat(usr, "<span class='warning'>The round must be in progress to use this!</span>")
 			return
 		var/mob/heart_recepient = locate(href_list["admincommend"])
-		if(!heart_recepient?.ckey)
-			to_chat(usr, "<span class='warning'>This mob either no longer exists or no longer is being controlled by someone!</span>")
+		if(tgui_alert(usr, "Are you sure you'd like to anonymously commend [heart_recepient.ckey]? NOTE: This is logged, please use this sparingly and only for actual kind behavior, not as a reward for your friends.", "<3?", list("Yes", "No")) == "No")
 			return
-
-		switch(tgui_alert(usr, "Would you like the effects to apply immediately or at the end of the round? Applying them now will make it clear it was an admin commendation.", "<3?", list("Apply now", "Apply at round end", "Cancel")))
-			if("Apply now")
-				usr.nominate_heart(heart_recepient, instant = TRUE)
-			if("Apply at round end")
-				usr.nominate_heart(heart_recepient)
-			else
-				return
+		usr.nominate_heart(heart_recepient)
 
 	else if(href_list["force_war"])
 		if(!check_rights(R_ADMIN))
