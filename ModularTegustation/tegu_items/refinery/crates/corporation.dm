@@ -31,6 +31,7 @@
 		/obj/item/trait_injector/agent_workchance_trait_injector,
 		/obj/item/trait_injector/clerk_fear_immunity_injector,
 		/obj/item/trait_injector/officer_upgrade_injector,
+		/obj/item/ego_gift_extractor,
 	)
 
 //K Corporation
@@ -149,6 +150,8 @@
 	name = "S Corp Crate"
 	desc = "A crate recieved from the mysterious S-Corp. Open with a Crowbar."
 	icon_state = "crate_shrimp"
+	veryrarechance = 5
+	cosmeticchance = 5
 	lootlist =	list(
 		/obj/item/reagent_containers/food/drinks/soda_cans/wellcheers_red,
 		/obj/item/reagent_containers/food/drinks/soda_cans/wellcheers_white,
@@ -161,10 +164,20 @@
 
 	rareloot =	list(
 		/obj/item/gun/ego_gun/shrimp/minigun,
-		/mob/living/simple_animal/hostile/shrimp,
 		/obj/item/grenade/spawnergrenade/shrimp,
+		/obj/item/trait_injector/shrimp_injector,
 	)
 
+	veryrareloot = list(
+		/obj/item/grenade/spawnergrenade/shrimp/super,
+		/obj/item/grenade/spawnergrenade/shrimp/hostile,
+		/obj/item/reagent_containers/pill/shrimptoxin,
+		/obj/item/fishing_rod/wellcheers,
+	)
+
+	cosmeticloot = list(
+		/mob/living/simple_animal/hostile/shrimp,
+	)
 
 //W Corporation
 /obj/structure/lootcrate/w_corp
