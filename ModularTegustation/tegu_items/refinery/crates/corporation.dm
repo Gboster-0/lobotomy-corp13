@@ -26,12 +26,13 @@
 		/obj/item/tool_extractor,
 	)
 
-	//Injectors, quite desireable as they are quite expensive.
+	//Injectors and rare extractors, quite desireable as they are quite expensive.
 	veryrareloot =	list(
 		/obj/item/trait_injector/agent_workchance_trait_injector,
 		/obj/item/trait_injector/clerk_fear_immunity_injector,
 		/obj/item/trait_injector/officer_upgrade_injector,
 		/obj/item/ego_gift_extractor,
+		/obj/item/device/Plushie_Extractor,
 	)
 
 //K Corporation
@@ -188,25 +189,25 @@
 	veryrarechance = 15
 	cosmeticchance = 25
 	lootlist =	list(
-		/obj/item/ego_weapon/city/charge/wcorp,
+		/obj/item/ego_weapon/city/wcorp,
 		/obj/item/clothing/suit/armor/ego_gear/wcorp,
 		/obj/item/powered_gadget/teleporter,
 	)
 
 	rareloot =	list(
-		/obj/item/ego_weapon/city/charge/wcorp/fist,
-		/obj/item/ego_weapon/city/charge/wcorp/axe,
-		/obj/item/ego_weapon/city/charge/wcorp/spear,
-		/obj/item/ego_weapon/city/charge/wcorp/dagger,
-		/obj/item/ego_weapon/city/charge/wcorp/hammer,
-		/obj/item/ego_weapon/city/charge/wcorp/hatchet,
+		/obj/item/ego_weapon/city/wcorp/fist,
+		/obj/item/ego_weapon/city/wcorp/axe,
+		/obj/item/ego_weapon/city/wcorp/spear,
+		/obj/item/ego_weapon/city/wcorp/dagger,
+		/obj/item/ego_weapon/city/wcorp/hammer,
+		/obj/item/ego_weapon/city/wcorp/hatchet,
 	)
 
 	veryrareloot = list(
-		/obj/item/ego_weapon/city/charge/wcorp/shield,
-		/obj/item/ego_weapon/city/charge/wcorp/shield/spear,
-		/obj/item/ego_weapon/city/charge/wcorp/shield/club,
-		/obj/item/ego_weapon/city/charge/wcorp/shield/axe,
+		/obj/item/ego_weapon/city/wcorp/shield,
+		/obj/item/ego_weapon/city/wcorp/shield/spear,
+		/obj/item/ego_weapon/city/wcorp/shield/club,
+		/obj/item/ego_weapon/city/wcorp/shield/axe,
 	)
 
 	cosmeticloot = list(
