@@ -160,7 +160,7 @@
 	var/safe_tox_max = 0.05
 	var/SA_para_min = 1
 	var/SA_sleep_min = 5
-	var/oxygen_used = 0
+	//var/oxygen_used = 0
 	var/breath_pressure = (breath.total_moles()*R_IDEAL_GAS_EQUATION*breath.temperature)/BREATH_VOLUME
 
 	var/list/breath_gases = breath.gases
@@ -178,7 +178,6 @@
 			var/ratio = 1 - O2_partialpressure/safe_oxy_min
 			adjustOxyLoss(min(5*ratio, 3))
 			failed_last_breath = TRUE
-			oxygen_used = breath_gases[/datum/gas/oxygen][MOLES]*ratio
 		else
 			adjustOxyLoss(3)
 			failed_last_breath = TRUE
@@ -188,11 +187,7 @@
 		failed_last_breath = FALSE
 		if(health >= crit_threshold)
 			adjustOxyLoss(-5)
-		oxygen_used = breath_gases[/datum/gas/oxygen][MOLES]
 		clear_alert("not_enough_oxy")
-
-	breath_gases[/datum/gas/oxygen][MOLES] -= oxygen_used
-	breath_gases[/datum/gas/carbon_dioxide][MOLES] += oxygen_used
 
 	//CARBON DIOXIDE
 	if(CO2_partialpressure > safe_co2_max)
@@ -296,8 +291,7 @@
 
 //Fourth and final link in a breath chain
 /mob/living/carbon/proc/handle_breath_temperature(datum/gas_mixture/breath)
-	// The air you breathe out should match your body temperature
-	breath.temperature = bodytemperature
+	return
 
 /mob/living/carbon/proc/get_breath_from_internal(volume_needed)
 	if(internal)

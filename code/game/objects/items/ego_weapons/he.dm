@@ -845,7 +845,7 @@
 /obj/item/ego_weapon/fluid_sac
 	name = "fluid sac"
 	desc = "Crush them, even if you must disgorge everything."
-	special = "This weapon can be used to perform a jump attack after a short wind-up."
+	special = "This weapon can be used to perform a jump attack after a short wind-up (Middle mouse button click/alt click an enemy)."
 	icon_state = "fluid_sac"
 	force = 55
 	attack_speed = 2
@@ -872,17 +872,20 @@
 /obj/item/ego_weapon/fluid_sac/proc/JumpReset()
 	can_attack = TRUE
 
-/obj/item/ego_weapon/fluid_sac/afterattack(atom/A, mob/living/user, proximity_flag, params)
-	if(!CanUseEgo(user) || !can_attack)
+/obj/item/ego_weapon/fluid_sac/MiddleClickAction(atom/target, mob/living/user)
+	. = ..()
+	if(.)
 		return
-	if(!isliving(A))
+	if(!can_attack)
 		return
+	if(!isliving(target))
+		return
+	var/mob/living/A = target
 	if(dash_cooldown > world.time)
 		to_chat(user, span_warning("Your dash is still recharging!"))
 		return
 	if((get_dist(user, A) < 2) || (!(can_see(user, A, dash_range))))
 		return
-	..()
 	if(do_after(user, 5, src))
 		dash_cooldown = world.time + dash_cooldown_time
 		playsound(src, 'sound/abnormalities/ichthys/jump.ogg', 50, FALSE, -1)
@@ -1437,7 +1440,7 @@
 	righthand_file = 'icons/mob/inhands/64x64_righthand.dmi'
 	inhand_x_dimension = 64
 	inhand_y_dimension = 64
-	force = 45	//Low dps. You'll see why later
+	force = 45	//Low dps - has a ranged attack
 	attack_speed = 2
 	damtype = BLACK_DAMAGE
 	attack_verb_continuous = list("burns", "boils")
@@ -1495,6 +1498,9 @@
 		G.color = "#622F22"
 		G.fire()
 		G.damage*=force_multiplier
+		var/userjust = (get_modified_attribute_level(user, JUSTICE_ATTRIBUTE))
+		var/justicemod = 1 + userjust/100
+		G.damage*=justicemod
 		firing_cooldown = firing_cooldown_time + world.time
 		stored_projectiles -= 1
 		update_icon_state(user)
@@ -1791,13 +1797,14 @@
 /obj/item/ego_weapon/nixie/get_clamped_volume()
 	return 50
 
-/obj/item/ego_weapon/sunshower //TD
+//Gimmicky weapon with a potentially high payout
+/obj/item/ego_weapon/sunshower
 	name = "sunshower"
 	desc = "I cannot protect you from this rain, but I can guard you from false kindness."
-	special = "This weapon gains 1 poise for every attack. 1 poise gives you a 2% chance to crit at 3x damage, stacking linearly. Critical hits reduce poise to 0."
+	special = "This weapon gains 1 poise for every attack. 1 poise gives you a 2% chance to crit and deal 3x damage, stacking linearly. Critical hits reduce poise to 0."
 	icon_state = "sunshower"
-	force = 17
-	attack_speed = 0.5
+	force = 26
+	attack_speed = 1
 	damtype = BLACK_DAMAGE
 	attack_verb_continuous = list("slices", "cleaves", "chops")
 	attack_verb_simple = list("slice", "cleave", "chop")
@@ -1806,6 +1813,11 @@
 							TEMPERANCE_ATTRIBUTE = 40
 							)
 	var/poise = 0
+	var/combo = 0
+	/// Maximum world.time after which combo is reset
+	var/combo_time
+	/// Wait time between attacks for combo to reset
+	var/combo_wait = 20
 
 /obj/item/ego_weapon/sunshower/examine(mob/user)
 	. = ..()
@@ -1814,17 +1826,37 @@
 /obj/item/ego_weapon/sunshower/attack(mob/living/target, mob/living/carbon/human/user)
 	if(!CanUseEgo(user))
 		return
+	if(world.time > combo_time)
+		combo = 1
+	combo_time = world.time + combo_wait
+	switch(combo) //Weird combo where the later attacks deal more damage
+		if(1)
+			hitsound = 'sound/weapons/ego/sunshower1.ogg'
+			force *= 1.2
+			user.changeNext_move(CLICK_CD_MELEE * 1.8)
+		if(2)
+			hitsound = 'sound/weapons/ego/sunshower2.ogg'
+			force *= 1.8
+			user.changeNext_move(CLICK_CD_MELEE * 1.2)
+		if(3)
+			hitsound = 'sound/weapons/ego/sunshower3.ogg'
+			combo = 0
+			force *= 2
+			user.changeNext_move(CLICK_CD_MELEE * 1)
 	poise+=1
 	if(poise>= 20)
 		poise = 20
-
 	//Crit stuff, taken from fourleaf, so thanks to whomever coded that!
 	if(prob(poise*2))
 		force*=3
 		to_chat(user, span_userdanger("Critical!"))
 		poise = 0
 	..()
+	combo += 1
 	force = initial(force)
+
+/obj/item/ego_weapon/sunshower/get_clamped_volume()
+	return 40
 
 /*
 * Look i cant think of anything for this fucking camera

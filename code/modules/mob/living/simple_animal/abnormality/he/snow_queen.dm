@@ -44,24 +44,24 @@
 	work_damage_type = WHITE_DAMAGE
 	wander = FALSE
 
-	observation_prompt = "You remember her. \
-		She got cold easily. \
-		Cryo-coffin must have been freezing. \
-		Freezing and cold. \
-		You thought a lot, seeing her who couldn't see her dreams come true, trapped inside ice. \
-		Brave Gerda headed to the Snow Palace and..."
+	observation_prompt = "You remember her. <br>\
+		She got cold easily. <br>\
+		The cryo-coffin must have been freezing. <br>\
+		Freezing and cold. <br>\
+		You thought about it often, seeing she who couldn't see her dreams come true, trapped inside ice. <br>\
+		The brave agent headed to the Snow Palace and..."
 	observation_choices = list("Saved Kai", "Met the Snow Queen")
 	correct_choices = list("Met the Snow Queen")
-	observation_success_message = "The Snow Queen was cold and beautiful. You heard ice melting."
-	observation_fail_message = "Gerda saved Kai and returned home. They lived happily ever after."
+	observation_success_message = "The Snow Queen was cold and beautiful. <br>You heard ice melting."
+	observation_fail_message = "Gerda saved Kai and returned home. <br>They lived happily ever after."
 
 	ego_list = list(
 		/datum/ego_datum/armor/frostsplinter,
 		/datum/ego_datum/weapon/frostsplinter
 	)
-	gift_type = /datum/ego_gifts/frost_splinter
+	gift_type = null
 	//Gift is rewarded at the end of a duel with Snow Queen.
-	gift_chance = 0
+	gift_chance = 100
 	abnormality_origin = ABNORMALITY_ORIGIN_LOBOTOMY
 	var/can_act = TRUE
 	//The purpose of this variable is to prevent people from ghosting in the arena and making snow queen unworkable.
@@ -107,6 +107,11 @@
 				teleport_turf = get_turf(T)
 				teleport_locations += teleport_turf
 		RegisterCleaveZones()
+
+/mob/living/simple_animal/hostile/abnormality/snow_queen/ObservationResult(mob/living/carbon/human/user, condition)
+	. = ..()
+	if(condition)
+		user.Apply_Gift(new /datum/ego_gifts/frostcrown)
 
 /mob/living/simple_animal/hostile/abnormality/snow_queen/SuccessEffect(mob/living/carbon/human/user, work_type, pe)
 	. = ..()
@@ -498,12 +503,15 @@
 	storybook_hero = null
 	frozen_employee = null
 
-/mob/living/simple_animal/hostile/abnormality/snow_queen/proc/RewardPrisoner(mob/living/carbon/rewardee)
+/mob/living/simple_animal/hostile/abnormality/snow_queen/proc/RewardPrisoner(mob/living/carbon/human/rewardee)
 	if(!rewardee)
 		return
 	rewardee.forceMove(release_location)
 	to_chat(rewardee, "The roses blossom and the Snow Palace falls. Not a single soul remembered the woman sleeping there.")
-	GiftUser(rewardee, 1, 100)
+	if(ishuman(rewardee))
+		var/datum/ego_gifts/frostsplinter/S = new
+		S.datum_reference = datum_reference
+		rewardee.Apply_Gift(S)
 
 //Procs when the hero is dusted by Snow Queen or the arena timer runs out.
 /mob/living/simple_animal/hostile/abnormality/snow_queen/proc/WinterContinues()
