@@ -147,9 +147,9 @@
 	abno_type = /mob/living/simple_animal/hostile/abnormality/cherry_blossoms
 	abno_code = "O-04-100"
 	abno_info = list(
-		"When the work result was Good, the Qliphoth Counter lowered.",
+		"When the work result was Good, the Qliphoth Counter lowered with a high probability.",
 		"When an employee panicked in the Containment Unit, the Qliphoth Counter lowered.",
-		"When the Qliphoth Counter reached 0, five employees were marked for death. Whilst under its effect, employees with the mark recieved 4x as much damage from all sources.",
+		"When the Qliphoth Counter reached 0, five employees were marked for death. Whilst under its effect, employees with the mark recieved 3x as much damage from all sources.",
 		"Upon the death of one of these employees, the HP and SP of every employee in the facility was healed, and all marks were removed.")
 
 //Gone with a Simple Smile
@@ -368,3 +368,13 @@
 		"When Insight Work was performed, the abnormality's physical condition improved. If the abnormality was in a \"Pristine\" state, the Qliphoth Counter lowered.",
 		"When the Qliphoth Counter reached zero, the physical condition of the abnormality improved significantly.",
 		"After its condition improves beyond a certain point, the abnormality will breach containment and travel through the facility on a horizontal path, dealing massive WHITE damage to everything it impacts.")
+
+//Dealer of the Damned
+/obj/item/paper/fluff/info/teth/dealerdamned
+	abno_type = /mob/living/simple_animal/hostile/abnormality/dealerdamned
+	abno_code = "T-01-72"
+	abno_info = list(
+		"When Agent Jamie poked T-01-72, the abnormality took some of Agent Jamie's health as a wager for a coin flip. When the coin landed heads, Jamie's health was refunded and the next work had a higher success rate. When the coin landed tails, nothing happened.",
+		"When Agent Jamie tried to coinflip a second time prior to working, T-01-72 refused.",
+		"When Gambling work was performed, T-01-72 and the agent engaged in a game of Russian Roulette.",
+		"If the agent survived the game of Russian Roulette, they were awarded with an unique E.G.O. Weapon.")
