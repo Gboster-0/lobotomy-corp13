@@ -646,6 +646,13 @@
 	insight_mod = 3
 	slot = EYE
 
+/datum/ego_gifts/aedd
+	name = "AEDD"
+	icon_state = "grinder"
+	temperance_bonus = -2
+	justice_bonus = 5
+	slot = CHEEK
+
 /datum/ego_gifts/morii
 	name = "Morii"
 	icon_state = "morii"
@@ -1247,6 +1254,15 @@
 	temperance_bonus = -2
 	justice_bonus = 6
 	slot = EYE
+
+/datum/ego_gifts/sunyata
+	name = "Bloody Gadget"
+	icon_state = "sunyata"
+	fortitude_bonus = 1
+	prudence_bonus = 2
+	temperance_bonus = 1
+	justice_bonus = 2
+	slot = HAND_1
 
 /**
  * ALEPH EGO Gifts
