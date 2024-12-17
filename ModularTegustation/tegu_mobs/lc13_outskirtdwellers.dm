@@ -21,21 +21,19 @@
 	response_disarm_simple = "gently push aside"
 	verb_ask = "chitters"
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
-	stop_automated_movement_when_pulled = 1
+	stop_automated_movement_when_pulled = TRUE
 	environment_smash = FALSE
 	density = FALSE
 	maxHealth = 120
 	health = 120
 	speed = 2
-	melee_damage_lower = 0
-	melee_damage_upper = 2
+	melee_damage_lower = 1
+	melee_damage_upper = 3
 	turns_per_move = 2
 	butcher_difficulty = 2
 	buffed = 0
 	death_message = "pops."
-	density = TRUE
-	search_objects = 1
-	tame_chance = 5
+	search_objects = TRUE
 	attack_verb_continuous = "bites"
 	attack_verb_simple = "bite"
 	attack_sound = 'sound/weapons/bite.ogg'
@@ -45,8 +43,7 @@
 	butcher_results = list(/obj/item/food/meat/slab/worm = 1)
 	guaranteed_butcher_results = list(/obj/item/food/meat/slab/worm = 1)
 	silk_results = list(/obj/item/stack/sheet/silk/amber_simple = 1)
-	wanted_objects = list(/obj/effect/decal/cleanable/blood/gibs/, /obj/item/organ, /obj/item/bodypart/head, /obj/item/bodypart/r_arm, /obj/item/bodypart/l_arm, /obj/item/bodypart/l_leg, /obj/item/bodypart/r_leg)
-	food_type = list(/obj/item/organ, /obj/item/bodypart/head, /obj/item/bodypart/r_arm, /obj/item/bodypart/l_arm, /obj/item/bodypart/l_leg, /obj/item/bodypart/r_leg)
+	wanted_objects = list(/obj/effect/decal/cleanable/blood/gibs, /obj/item/organ, /obj/item/bodypart/head, /obj/item/bodypart/r_arm, /obj/item/bodypart/l_arm, /obj/item/bodypart/l_leg, /obj/item/bodypart/r_leg)
 	var/current_size = RESIZE_DEFAULT_SIZE
 
 /mob/living/simple_animal/hostile/morsel/examine(mob/user)
@@ -84,6 +81,12 @@
 	if(!target)
 		retreat_distance = 0
 
+//This is so morsel doesnt run to food while your trying to evacuate them.
+/mob/living/simple_animal/hostile/morsel/FindTarget()
+	if(pulledby)
+		return
+	return ..()
+
 /mob/living/simple_animal/hostile/morsel/AttackingTarget()
 	. = ..()
 	if(.)
@@ -103,7 +106,7 @@
 			SLEEP_CHECK_DEATH(2)
 
 /mob/living/simple_animal/hostile/morsel/attackby(obj/item/O, mob/user, params)
-	if(!is_type_in_list(O, food_type))
+	if(!is_type_in_list(O, wanted_objects))
 		return ..()
 	if(stat == DEAD)
 		to_chat(user, span_warning("[src] is dead!"))
@@ -117,10 +120,16 @@
 	visible_message(span_notice("[src] bites [O] and grinds it into a digestable paste."))
 	playsound(get_turf(user), 'sound/items/eatfood.ogg', 10, 3, 3)
 	buffed = (buffed + 1)
-	adjustBruteLoss(-5)
+	adjustBruteLoss(-15)
 	if(buffed >= 10)
 		PustuleChurn()
 	qdel(O)
+
+/mob/living/simple_animal/hostile/morsel/CanAttack(atom/the_target)
+	if(isobj(the_target))
+		if(is_type_in_typecache(the_target, wanted_objects))
+			return TRUE
+	return ..()
 
 /mob/living/simple_animal/hostile/morsel/proc/PustuleChurn()
 	var/newsize = current_size
@@ -539,6 +548,7 @@ Mobs that mostly focus on dealing RED damage, they are all a bit more frail than
 	move_to_delay = 8 //very slow
 	ranged = TRUE
 	mob_spawn_amount = 0 //so we dont recursively spawn more
+	silk_results = list(/obj/item/stack/sheet/silk/human_simple = 1)
 
 	var/can_act = TRUE
 	var/scream_cooldown
