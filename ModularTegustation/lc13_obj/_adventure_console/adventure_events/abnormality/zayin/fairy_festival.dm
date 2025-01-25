@@ -48,7 +48,7 @@
 /datum/adventure_event/festival/EventChoiceFormat(obj/machinery/M, mob/living/carbon/human/H)
 	switch(cords)
 		if(1)
-			CHANCE_BUTTON_FORMAT(2, "FOLLOW IT", M)
+			BUTTON_FORMAT(2, "FOLLOW IT", M)
 			BUTTON_FORMAT(3, "RESIST IT", M)
 			BUTTON_FORMAT(4, "SQUISH IT", M)
 			return
@@ -59,8 +59,6 @@
 			return
 		if(3)
 			AdjustHitPoint(10)
-			return
 		if(4)
 			AdjustHitPoint(-5)
-			return
 	return ..()
