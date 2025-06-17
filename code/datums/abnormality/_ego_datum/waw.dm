@@ -351,7 +351,7 @@
 	cost = 50
 
 /datum/ego_datum/weapon/discord
-	item_path = /obj/item/ego_weapon/discord
+	item_path = /obj/item/ego_weapon/wield/discord
 	cost = 50
 
 // Little Red Riding Hood Mercenary - Crimson Scar & Crimson Claw
@@ -515,4 +515,15 @@
 
 /datum/ego_datum/armor/heaven
 	item_path = /obj/item/clothing/suit/armor/ego_gear/waw/heaven
+	cost = 50
+
+// Der Fluchutze - Fell Bullet & Shotgun
+/datum/ego_datum/weapon/fellbullet
+	item_category = "Weapon (Rifle)"
+	item_path = /obj/item/ego_weapon/ranged/fellbullet
+	cost = 50
+
+/datum/ego_datum/weapon/fellscatter
+	item_category = "Weapon (Shotgun)"
+	item_path = /obj/item/ego_weapon/ranged/fellscatter
 	cost = 50

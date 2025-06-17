@@ -951,12 +951,11 @@
 			M.apply_status_effect(/datum/status_effect/rend_white)
 	user.Immobilize(5)
 
-
-
+// Reworked to use the bloodfeast component. Collect blood to improve your life leech ability.
 /obj/item/ego_weapon/dipsia
 	name = "dipsia"
 	desc = "The thirst will never truly be quenched."
-	special = "This weapon heals you on hit."
+	special = "This weapon heals you on hit. Using this weapon in hand can toggle enhanced health drain using collected blood."
 	icon_state = "dipsia"
 	force = 32
 	damtype = RED_DAMAGE
@@ -967,19 +966,72 @@
 							FORTITUDE_ATTRIBUTE = 80
 							)
 	crit_multiplier = 1.2	//Rapier, better crits
+	var/siphoning = FALSE
+	var/siphon_time = 1 SECONDS
+
+/obj/item/ego_weapon/dipsia/Initialize()
+	. = ..()
+	AddComponent(/datum/component/bloodfeast, siphon = TRUE, range = 2, starting = 100, threshold = 1500, max_amount = 1500)
+
+/obj/item/ego_weapon/dipsia/examine(mob/user)
+	. = ..()
+	var/datum/component/bloodfeast/bloodfeast = GetComponent(/datum/component/bloodfeast)
+	if(bloodfeast) // dont want to succ blood while contained
+		. += "It has [bloodfeast.blood_amount] units of stored blood."
+
+/obj/item/ego_weapon/dipsia/proc/AdjustThirst(blood_amount)
+	var/datum/component/bloodfeast/bloodfeast = GetComponent(/datum/component/bloodfeast)
+	bloodfeast.AdjustBlood(blood_amount)
+
+/obj/item/ego_weapon/dipsia/attack_self(mob/living/user)
+	if(!CanUseEgo(user))
+		return
+	if(siphoning)
+		to_chat(user,span_warning("You cease siphoning with the [src] sword."))
+		siphoning = FALSE
+		filters = null
+		user.playsound_local(user, 'sound/effects/bleed.ogg', 25, TRUE)
+		return
+	var/datum/component/bloodfeast/bloodfeast = GetComponent(/datum/component/bloodfeast)
+	siphoning = TRUE
+	user.playsound_local(user, 'sound/effects/bleed_apply.ogg', 25, TRUE)
+	to_chat(user,span_warning("You begin siphoning with the [src] sword."))
+	if(bloodfeast.blood_amount < 100)
+		to_chat(user,span_warning("The sword drains your blood to fuel itself!"))
+		user.adjustBruteLoss(20)
+		AdjustThirst(100)
+	AdjustThirst(-50)
+	filters += filter(type="drop_shadow", x=0, y=0, size=5, offset=2, color=rgb(163, 8, 8))
+	addtimer(CALLBACK(src, PROC_REF(SiphonDrain), user), siphon_time)
+
+/obj/item/ego_weapon/dipsia/proc/SiphonDrain(mob/user)
+	var/datum/component/bloodfeast/bloodfeast = GetComponent(/datum/component/bloodfeast)
+	AdjustThirst(-10)
+	if(bloodfeast.blood_amount < 1)
+		siphoning = FALSE
+		filters = null
+		if(user)
+			to_chat(user,span_warning("Your [src] sword shuts off due to a lack of blood!"))
+			return
+	addtimer(CALLBACK(src, PROC_REF(SiphonDrain), user), siphon_time)
 
 /obj/item/ego_weapon/dipsia/attack(mob/living/target, mob/living/carbon/human/user)
 	if(!CanUseEgo(user))
 		return
 	if(!(target.status_flags & GODMODE) && target.stat != DEAD)
-		var/heal_amt = force*0.10
+		var/userjust = (get_modified_attribute_level(user, JUSTICE_ATTRIBUTE))
+		var/justicemod = 1 + userjust/100
+		AdjustThirst(force * justicemod)
+		var/heal_amt = force* 0.05
+		if(siphoning)
+			heal_amt *= 4
 		if(isanimal(target))
 			var/mob/living/simple_animal/S = target
 			if(S.damage_coeff.getCoeff(damtype) > 0)
 				heal_amt *= S.damage_coeff.getCoeff(damtype)
 			else
 				heal_amt = 0
-		user.adjustBruteLoss(-heal_amt)
+			user.adjustBruteLoss(-heal_amt)
 	..()
 
 /obj/item/ego_weapon/shield/pharaoh
@@ -1257,37 +1309,21 @@
 				L.throw_at(throw_target, rand(1, 2), whack_speed, user)
 	spin_reset()
 
-/obj/item/ego_weapon/discord
+/obj/item/ego_weapon/wield/discord
 	name = "discord"
-	desc = "The existance of evil proves the existance of good, just as light proves the existance of darkness."
-	special = "This weapon can be two-handed, and attacks thrice in rapid succession when doing so.\n Attacks with this weapon will heal a nearby ally using Assonance."
+	desc = "The existence of evil proves the existence of good, just as light proves the existence of darkness."
+	special = "This weapon attacks thrice in rapid succession when being wielded.\nAttacks with this weapon will heal a nearby ally using Assonance."
 	icon_state = "discord"
-	force = 28
+	force = 30
+	wielded_force = 27
 	attack_speed = 0.8
+	wielded_attack_speed = 0.8
 	attribute_requirements = list(
 							FORTITUDE_ATTRIBUTE = 80
 							)
 	damtype = BLACK_DAMAGE
-	var/wielded = FALSE
 
-/obj/item/ego_weapon/discord/Initialize()
-	. = ..()
-	RegisterSignal(src, COMSIG_TWOHANDED_WIELD, PROC_REF(OnWield))
-	RegisterSignal(src, COMSIG_TWOHANDED_UNWIELD, PROC_REF(on_unwield))
-
-/obj/item/ego_weapon/discord/ComponentInitialize()
-	. = ..()
-	AddComponent(/datum/component/two_handed, force_unwielded=30, force_wielded=20)
-
-/obj/item/ego_weapon/discord/proc/OnWield(obj/item/source, mob/user)
-	SIGNAL_HANDLER
-	wielded = TRUE
-
-/obj/item/ego_weapon/discord/proc/on_unwield(obj/item/source, mob/user)
-	SIGNAL_HANDLER
-	wielded = FALSE
-
-/obj/item/ego_weapon/discord/attack(mob/living/target, mob/living/carbon/human/user)
+/obj/item/ego_weapon/wield/discord/attack(mob/living/target, mob/living/carbon/human/user)
 	if(!..())
 		return FALSE
 	if(!ishostile(target))
@@ -1297,11 +1333,11 @@
 	Harmony(user)
 	if(!wielded)
 		return
-	user.changeNext_move(CLICK_CD_MELEE*attack_speed*2.5)
+	user.changeNext_move(CLICK_CD_MELEE*wielded_attack_speed*2.5)
 	for(var/i = 1 to 2)
 		addtimer(CALLBACK(src, PROC_REF(MultiSwing), target, user), CLICK_CD_MELEE * 0.6 * i)
 
-/obj/item/ego_weapon/discord/proc/MultiSwing(mob/living/target, mob/living/carbon/human/user)
+/obj/item/ego_weapon/wield/discord/proc/MultiSwing(mob/living/target, mob/living/carbon/human/user)
 	if(get_dist(target, user) > 1)
 		return
 	if(src != user.get_active_held_item())
@@ -1312,10 +1348,9 @@
 	playsound(loc, hitsound, get_clamped_volume(), TRUE, extrarange = stealthy_audio ? SILENCED_SOUND_EXTRARANGE : -1, falloff_distance = 0)
 	user.do_attack_animation(target)
 	target.attacked_by(src, user)
-
 	log_combat(user, target, pick(attack_verb_continuous), src.name, "(INTENT: [uppertext(user.a_intent)]) (DAMTYPE: [uppertext(damtype)])")
 
-/obj/item/ego_weapon/discord/proc/Harmony(mob/living/carbon/human/user)
+/obj/item/ego_weapon/wield/discord/proc/Harmony(mob/living/carbon/human/user)
 	var/heal_amount = 5
 	if(wielded)
 		heal_amount = 4
@@ -1901,8 +1936,11 @@
 	. = ..()
 	if(!user)
 		return
-	current_holder = user
-	RegisterSignal(current_holder, COMSIG_MOVABLE_MOVED, PROC_REF(UserMoved))
+	if(slot != ITEM_SLOT_HANDS) //Clean up our slowdown and whatnot if we're storing the anchor somewhere on our person
+		dropped(user)
+	else
+		current_holder = user //If it's going into our hands, then we wanna register the signal and register as the holder
+		RegisterSignal(current_holder, COMSIG_MOVABLE_MOVED, PROC_REF(UserMoved))
 
 //Destroy setup
 /obj/item/ego_weapon/blind_obsession/Destroy(mob/user)
@@ -1921,7 +1959,8 @@
 	if(!user)
 		return
 	speed_slowdown = 0
-	UnregisterSignal(current_holder, COMSIG_MOVABLE_MOVED)
+	if(current_holder) //This check wouldn't need to exist but P Corp items call dropped() when we remove an item from them, and it will runtime if we don't check here
+		UnregisterSignal(current_holder, COMSIG_MOVABLE_MOVED)
 	if(!thrown)
 		PowerReset(user)
 	current_holder = null

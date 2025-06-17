@@ -1521,12 +1521,13 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	H.send_item_attack_message(I, user, hit_area, affecting)
 
 	var/justice_mod = 1 + (get_modified_attribute_level(user, JUSTICE_ATTRIBUTE)/100)
-	var/damage = I.force * justice_mod
+	var/damage = I.force
+	if(!(SSmaptype.maptype in SSmaptype.citymaps))
+		damage *= justice_mod
 	if(istype(I, /obj/item/ego_weapon))
 		var/obj/item/ego_weapon/theweapon = I
 		damage *= theweapon.force_multiplier
 	apply_damage((damage * weakness), I.damtype, def_zone, armor_block, H, wound_bonus = Iwound_bonus, bare_wound_bonus = I.bare_wound_bonus, sharpness = I.get_sharpness(), white_healable = TRUE)
-
 	if(!I.force)
 		return FALSE //item force is zero
 
@@ -1591,6 +1592,14 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	return TRUE
 
 /datum/species/proc/apply_damage(damage, damagetype = BRUTE, def_zone = null, blocked, mob/living/carbon/human/H, forced = FALSE, spread_damage = FALSE, wound_bonus = 0, bare_wound_bonus = 0, sharpness = SHARP_NONE, white_healable = FALSE)
+	if(GLOB.damage_type_shuffler?.is_enabled && IsColorDamageType(damagetype))
+		var/datum/damage_type_shuffler/shuffler = GLOB.damage_type_shuffler
+		var new_damage_type = shuffler.mapping_offense[damagetype]
+		if(new_damage_type == PALE_DAMAGE && damagetype != PALE_DAMAGE)
+			damage *= shuffler.pale_debuff
+		else if(new_damage_type != PALE_DAMAGE && damagetype == PALE_DAMAGE)
+			damage /= shuffler.pale_debuff
+		damagetype = new_damage_type
 	var/signal_return = SEND_SIGNAL(H, COMSIG_MOB_APPLY_DAMGE, damage, damagetype, def_zone, wound_bonus, bare_wound_bonus, sharpness)
 	if(signal_return & COMPONENT_MOB_DENY_DAMAGE)
 		return FALSE

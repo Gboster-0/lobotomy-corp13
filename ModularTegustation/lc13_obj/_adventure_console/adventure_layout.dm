@@ -1,5 +1,5 @@
 /**
- * ADVENTURE CONSOLE V2.1
+ * ADVENTURE CONSOLE V2.2
  * TEXT BASED ADVENTURES
  * Adventures that are mostly predefined paths.
  * This was difficult to finalize since i havent made a text based adventure before.
@@ -600,7 +600,6 @@
 	enemy_key = null
 	currently_scanned = FALSE
 
-	max_block_heal = 0
 	AdjustProgress(10)
 	AdjustStats(increased_stat, 2)
 
